@@ -69,12 +69,12 @@ Var StartMenuFolder
 ;--------------------------------
 ;Version Information
 
-  VIProductVersion "1.2.0.0"
+  VIProductVersion "2.0.0.0"
   VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "Snarl Style Say Hello"
   VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Tlhan Ghun"
   VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "© 2009 Tlhan Ghun GPL v.3"
   VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "Speaks Snarl notifications"
-  VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "1.2"
+  VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "2.0"
 
 
 Function un.UninstallDirs
@@ -134,7 +134,7 @@ Section "Snarl style Say Hello files"
   File "Interop.libSnarlStyles.dll"
   File "Interop.melon.dll"
   File "Interop.prefs_kit_d2.dll"
-  File "Interop.SpeechLib.dll"
+ ; File "Interop.SpeechLib.dll"
 ;  File "Newtonsoft.Json.dll"
   File "LICENSE.txt"
   File "Documentation.ico"
@@ -143,6 +143,8 @@ Section "Snarl style Say Hello files"
   File "sayHello.pdb"
   File "uninstall.ico"
   File "sayHello.ico"
+  File "Winkle.dll"
+  File "Winkle.pdb"
   
   
   ; Write the installation path into the registry

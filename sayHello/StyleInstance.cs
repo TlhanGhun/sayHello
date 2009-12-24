@@ -5,8 +5,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using libSnarlStyles;
-
-using SpeechLib;
+using System.Speech.Synthesis;
 
 namespace sayHello
 {
@@ -15,15 +14,12 @@ namespace sayHello
 
     public class StyleInstance : IStyleInstance
     {
-        private Dictionary<string, string> availableVoices = new Dictionary<string, string>();
-        private SpVoice vox = new SpVoice();
+        private SpeechSynthesizer vox = new System.Speech.Synthesis.SpeechSynthesizer();
+        private System.Collections.ObjectModel.ReadOnlyCollection<InstalledVoice> voices;
 
         public StyleInstance()
         {
-            foreach (ISpeechObjectToken voice in vox.GetVoices("", ""))
-            {
-                availableVoices.Add(voice.GetDescription(0), voice.Id);
-            }
+            voices = vox.GetInstalledVoices();
         }
 
          
@@ -63,18 +59,9 @@ namespace sayHello
             
             try
             {
-                if (NotificationInfo.Scheme != string.Empty && availableVoices.Count > 0)
-                {
-                    int i=0;
-                    foreach (ISpeechObjectToken voice in vox.GetVoices("", ""))
-                    {
-                        if (NotificationInfo.Scheme.ToLower() == voice.GetDescription(0).ToLower())
-                        {
-                            vox.Voice = vox.GetVoices("", "").Item(i);
-                            break;
-                        }
-                        i++;
-                    }
+                if (NotificationInfo.Scheme != string.Empty)
+                {                
+                    vox.SelectVoice(getVoiceName(NotificationInfo.Scheme));
                 }
             }
             catch (Exception e)
@@ -87,17 +74,31 @@ namespace sayHello
                 string text = Properties.Settings.Default.spokenText;
                 text = text.Replace("$title", NotificationInfo.Title);
                 text = text.Replace("$text", NotificationInfo.Text);
-                vox.Rate = Properties.Settings.Default.speechRate;
-                vox.WaitUntilDone(-1);
-                vox.Speak(text, SpeechVoiceSpeakFlags.SVSFlagsAsync);
+                vox.Rate = Properties.Settings.Default.speechRate; 
+                vox.SpeakAsync(text);
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "Error in speaking this notification", MessageBoxButtons.OK);
-                MessageBox.Show(e.StackTrace, "Details", MessageBoxButtons.OK);
+               // MessageBox.Show(e.Message, "Error in speaking this notification", MessageBoxButtons.OK);
+               // MessageBox.Show(e.StackTrace, "Details", MessageBoxButtons.OK);
+                Console.WriteLine(e.Message);
             }
         }
 
         #endregion
+
+        private string getVoiceName(string voiceNameinLowerCharacters)
+        {
+            string voiceName = "";
+            foreach (InstalledVoice voice in voices)
+            {
+                if (voiceNameinLowerCharacters.ToLower() == voice.VoiceInfo.Name.ToLower())
+                {
+                    voiceName = voice.VoiceInfo.Name;
+                    break;
+                }
+            }
+            return voiceName;
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SpeechLib;
+using System.Speech.Synthesis;
 using sayHello;
 
 namespace sayHello
@@ -14,9 +14,8 @@ namespace sayHello
     public partial class Options : Form
     {
 
-        private SpVoice vox = new SpVoice();
+        private SpeechSynthesizer vox = new System.Speech.Synthesis.SpeechSynthesizer();
         private int RateOfSpeech = 0;
-        private SpVoice speechInterface = new SpVoice();
         private Dictionary<string, string> availableVoices = new Dictionary<string, string>();
 
         public Options()
@@ -27,17 +26,17 @@ namespace sayHello
             this.numericUpDown_SpeechRate.Value = Properties.Settings.Default.speechRate;
             RateOfSpeech = Properties.Settings.Default.speechRate;
 
-            foreach (ISpeechObjectToken voice in speechInterface.GetVoices("", ""))
+            foreach (InstalledVoice voice in vox.GetInstalledVoices())
             {
-                availableVoices.Add(voice.GetDescription(0), voice.Id);
-                this.comboBox_Voices.Items.Add(voice.GetDescription(0));
+                availableVoices.Add(voice.VoiceInfo.Name, voice.VoiceInfo.Id);
+                this.comboBox_Voices.Items.Add(voice.VoiceInfo.Name);
                 this.comboBox_Voices.SelectedIndex = 0;
             }
 
             if (Properties.Settings.Default.voice != string.Empty && availableVoices.Count > 0)
             {
                 string bla = availableVoices[Properties.Settings.Default.voice];
-                vox.Voice = vox.GetVoices("","").Item(this.comboBox_Voices.SelectedIndex);
+                vox.SelectVoice(this.comboBox_Voices.SelectedItem.ToString ());
             }
 
 
@@ -49,8 +48,7 @@ namespace sayHello
             text = text.Replace("$title", "Placeholder for the title");
             text = text.Replace("$text", "Placeholder for the text");
             vox.Rate = RateOfSpeech;
-            vox.WaitUntilDone(1);
-            vox.Speak(text, SpeechVoiceSpeakFlags.SVSFlagsAsync);
+            vox.SpeakAsync(text);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -73,7 +71,7 @@ namespace sayHello
         private void comboBox_Voices_SelectedIndexChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.voice = this.comboBox_Voices.SelectedItem.ToString();
-            vox.Voice = vox.GetVoices("", "").Item(this.comboBox_Voices.SelectedIndex);
+            vox.SelectVoice(this.comboBox_Voices.SelectedItem.ToString ());
         }
     }
 }

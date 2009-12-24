@@ -14,3 +14,7 @@ Fixed bug in scheme selection
 
 1.4
 Changed binary to x86 to hopefully let it work on 64Bit
+
+2.0
+Changed speech synthesizer to system.speech
+Added auto update feature

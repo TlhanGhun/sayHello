@@ -8,7 +8,8 @@ using Microsoft.Win32;
 using System.Reflection;
 using System.Windows.Interop;
 using prefs_kit_d2;
-using SpeechLib;
+using System.Speech.Synthesis;
+using Winkle;
 
 namespace sayHello
 {
@@ -22,12 +23,15 @@ namespace sayHello
         private Options myPrefWindow;
         private int numberOfVoices = 0;
 
-        private SpVoice speechInterface = new SpVoice();
+        private SpeechSynthesizer vox = new System.Speech.Synthesis.SpeechSynthesizer();
                
         public styleengine() {
             myPrefWindow = new Options();
             hwndOfPrferencesWindows = (int)myPrefWindow.Handle;
             myPrefWindow.FormClosed += new System.Windows.Forms.FormClosedEventHandler(Options_FormClosed);
+
+            Winkle.VersionCheck myUpdateChecker = new Winkle.VersionCheck("Say Hello", "http://tlhan-ghun.de/files/sayHello.xml");
+            Winkle.UpdateInfo myUpdateResponse = myUpdateChecker.checkForUpdate(System.Reflection.Assembly.GetExecutingAssembly(), false);
         }
 
         private void Options_FormClosed(Object sender, System.Windows.Forms.FormClosedEventArgs e)
@@ -56,7 +60,7 @@ namespace sayHello
         [ComVisible(true)]
         string IStyleEngine.Date()
         {
-            return "2009-12-22";
+            return "2009-12-24";
         }
 
         [ComVisible(true)]
@@ -100,7 +104,7 @@ namespace sayHello
         [ComVisible(true)]
         int IStyleEngine.Revision()
         {
-            return 7;
+            return 8;
         }
 
         [ComVisible(true)]
@@ -108,10 +112,13 @@ namespace sayHello
         {
             string toBeRegisteredVoices = "";
 
-            foreach (ISpeechObjectToken voice in speechInterface.GetVoices("","")) {
-                toBeRegisteredVoices += voice.GetDescription(0) + "|";
+            foreach (InstalledVoice voice in vox.GetInstalledVoices())
+            {
+                toBeRegisteredVoices += voice.VoiceInfo.Name + "|";
                 numberOfVoices++;
             }
+
+
             if (toBeRegisteredVoices.Length > 0)
             {
                 toBeRegisteredVoices = toBeRegisteredVoices.Substring(0, toBeRegisteredVoices.Length - 1);
@@ -122,8 +129,8 @@ namespace sayHello
 
             Style.Flags = S_STYLE_FLAGS.S_STYLE_IS_WINDOWLESS | S_STYLE_FLAGS.S_STYLE_IS_CONFIGURABLE;
             Style.IconPath = pathToIcon;
-            Style.Major = 1;
-            Style.Minor = 4;
+            Style.Major = Assembly.GetExecutingAssembly().GetName().Version.Major;
+            Style.Minor = Assembly.GetExecutingAssembly().GetName().Version.Minor;
             Style.Name = "Say Hello";
             Style.Path = Assembly.GetExecutingAssembly().CodeBase;
             Style.Schemes = toBeRegisteredVoices;
