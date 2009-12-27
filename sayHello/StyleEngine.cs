@@ -60,7 +60,7 @@ namespace sayHello
         [ComVisible(true)]
         string IStyleEngine.Date()
         {
-            return "2009-12-24";
+            return "2009-12-27";
         }
 
         [ComVisible(true)]
@@ -104,7 +104,7 @@ namespace sayHello
         [ComVisible(true)]
         int IStyleEngine.Revision()
         {
-            return 8;
+            return 9;
         }
 
         [ComVisible(true)]

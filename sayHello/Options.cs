@@ -39,7 +39,7 @@ namespace sayHello
                 vox.SelectVoice(this.comboBox_Voices.SelectedItem.ToString ());
             }
 
-
+           
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -72,6 +72,11 @@ namespace sayHello
         {
             Properties.Settings.Default.voice = this.comboBox_Voices.SelectedItem.ToString();
             vox.SelectVoice(this.comboBox_Voices.SelectedItem.ToString ());
+        }
+
+        private void labelSpeed_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
